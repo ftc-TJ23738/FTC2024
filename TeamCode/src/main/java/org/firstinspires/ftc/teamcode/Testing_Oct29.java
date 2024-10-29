@@ -14,6 +14,16 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 /*
+______  ______  ______
+\    /  \    /  \    /
+ \  /    \  /    \  /
+  \/      \/      \/
+  0        0       0
+  this link is google drawing, taking you to a layout of the controls for the robot
+  This robot is controlled by a LOGITECH F310 gamepad.
+  https://docs.google.com/drawings/d/1TKSZY56RuRNBei_8up7gPKN2joNKI1WNPxJ7ZEBC-L0/edit?usp=sharing
+
+
 https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
  *
