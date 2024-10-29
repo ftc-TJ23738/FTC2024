@@ -31,8 +31,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * the direction of all 4 motors (see code below).
  */
 
-@TeleOp(name="Testing 10/25/24", group="Linear OpMode")
-public class Testing_Oct25 extends LinearOpMode {
+@TeleOp(name="Testing 10/29/24", group="Linear OpMode")
+public class Testing_Oct29 extends LinearOpMode {
 
     // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
@@ -192,7 +192,7 @@ public class Testing_Oct25 extends LinearOpMode {
                 twr=0.5;
             }
 
-            //make the wheels deal with all the dataplz
+            //make the wheels deal with all the data
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
