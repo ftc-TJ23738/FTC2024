@@ -192,7 +192,7 @@ public class Testing_Oct25 extends LinearOpMode {
                 twr=0.5;
             }
 
-            //make the wheels deal with all the data
+            //make the wheels deal with all the dataplz
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
