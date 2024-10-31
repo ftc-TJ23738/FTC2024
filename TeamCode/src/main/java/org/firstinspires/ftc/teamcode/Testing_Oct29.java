@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+
 /*
 ______  ______  ______
 \    /  \    /  \    /
@@ -43,7 +45,7 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
 
 @TeleOp(name="Testing 10/29/24", group="Linear OpMode")
 public class Testing_Oct29 extends LinearOpMode {
-
+    DigitalChannel digitalTouch;
     // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -57,6 +59,9 @@ public class Testing_Oct29 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "magnet");
+
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -226,6 +231,12 @@ public class Testing_Oct29 extends LinearOpMode {
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
+            if (digitalTouch.getState() == false) {
+                telemetry.addData("Button", "PRESSED");
+            } else {
+                telemetry.addData("Button", "NOT PRESSED");
+            }
+
             telemetry.update();
             relativeLayout.post(new Runnable() {
                 public void run() {
