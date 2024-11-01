@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-
+@Disabled
 @TeleOp(name = "Concept: Scan Servo", group = "Concept")
-public class ConceptScanServo extends LinearOpMode {
+public class ServoTesting extends LinearOpMode {
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle

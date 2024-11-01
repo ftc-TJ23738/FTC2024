@@ -45,7 +45,7 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
 
 @TeleOp(name="Testing 11/1/24", group="Linear OpMode")
 public class Testing_Nov1 extends LinearOpMode {
-    DigitalChannel digitalTouch;
+    DigitalChannel armLimit;
     // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -129,7 +129,7 @@ public class Testing_Nov1 extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Press Start Button To Begin");
+        //telemetry.addData("Press Start Button To Begin");
         telemetry.update();
 
         waitForStart();
