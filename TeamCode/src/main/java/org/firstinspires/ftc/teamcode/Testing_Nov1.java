@@ -129,6 +129,7 @@ public class Testing_Nov1 extends LinearOpMode {
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Press Start Button To Begin");
         telemetry.update();
 
         waitForStart();
@@ -202,9 +203,9 @@ public class Testing_Nov1 extends LinearOpMode {
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
                 //Determine if motor GravityCounter is needed, based off magnetic sensor
                 if (armLimit.getState() == false) {
-                    twr=0.0;
+                    twr=0.0;  //No Buttons Pressed, Arm At Max
                 } else {
-                    twr=-0.075;
+                    twr=-0.075;  //No Buttons Pressed, PWR to counter weight
                 }
             } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
                 twr=-0.5;
