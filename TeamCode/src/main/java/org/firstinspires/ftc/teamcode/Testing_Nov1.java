@@ -43,8 +43,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * the direction of all 4 motors (see code below).
  */
 
-@TeleOp(name="Testing 10/29/24", group="Linear OpMode")
-public class Testing_Oct29 extends LinearOpMode {
+@TeleOp(name="Testing 11/1/24", group="Linear OpMode")
+public class Testing_Nov1 extends LinearOpMode {
     DigitalChannel digitalTouch;
     // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
@@ -59,9 +59,9 @@ public class Testing_Oct29 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "magnet");
-
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        //Initialize magnetic sensor
+        armLimit = hardwareMap.get(DigitalChannel.class, "magnet");
+        armLimit.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -200,7 +200,12 @@ public class Testing_Oct29 extends LinearOpMode {
 
             //Use Dpad to control the tower movement variables.
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
-                twr=-0.075;
+                //Determine if motor GravityCounter is needed, based off magnetic sensor
+                if (armLimit.getState() == false) {
+                    twr=0.0;
+                } else {
+                    twr=-0.075;
+                }
             } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
                 twr=-0.5;
             } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
@@ -216,11 +221,12 @@ public class Testing_Oct29 extends LinearOpMode {
             rightCH.setPower(twr);
 
             // print out data from drive motors and color sensor
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Status", "Run Time: " + runtime.toString());                                 //Runtime
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);         //FrontDrivePwr
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);           //BackDrivePwr
+            telemetry.addData("TowerPwr ", twr);                                                            //TowerPwr
             telemetry.addLine()
-                    .addData("Red", "%.3f", colors.red)
+                    .addData("Red", "%.3f", colors.red)                                                     //ColorSensorStuff
                     .addData("Green", "%.3f", colors.green)
                     .addData("Blue", "%.3f", colors.blue);
             telemetry.addLine()
@@ -231,10 +237,10 @@ public class Testing_Oct29 extends LinearOpMode {
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
-            if (digitalTouch.getState() == false) {
-                telemetry.addData("Button", "PRESSED");
+            if (armLimit.getState() == false) {                         //GravityCounterState
+                telemetry.addData("Gravity-Counter", "DISABLED");
             } else {
-                telemetry.addData("Button", "NOT PRESSED");
+                telemetry.addData("Gravity-Counter", "ENABLED");
             }
 
             telemetry.update();
