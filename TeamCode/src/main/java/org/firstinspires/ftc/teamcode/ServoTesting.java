@@ -30,26 +30,31 @@ public class ServoTesting extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
             // slew the servo, according to the rampUp (direction) variable.
-            if (rampUp) {
-                // Keep stepping up until we hit the max value.
-                position += INCREMENT ;
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
-                    rampUp = !rampUp;   // Switch ramp direction
-                }
-            }
-            else {
-                // Keep stepping down until we hit the min value.
-                position -= INCREMENT ;
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                    rampUp = !rampUp;  // Switch ramp direction
-                }
+            // if (rampUp) {
+            //     // Keep stepping up until we hit the max value.
+            //     position += INCREMENT ;
+            //     if (position >= MAX_POS ) {
+            //         position = MAX_POS;
+            //         rampUp = !rampUp;   // Switch ramp direction
+            //     }
+            // }
+            // else {
+            //     // Keep stepping down until we hit the min value.
+            //     position -= INCREMENT ;
+            //     if (position <= MIN_POS ) {
+            //         position = MIN_POS;
+            //         rampUp = !rampUp;  // Switch ramp direction
+            //     }
+            // }
+
+            if(gamepad1.y){
+                position++;
+            }else if(gamepad1.a){
+                position--;
             }
 
             // Display the current value
