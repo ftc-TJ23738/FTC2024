@@ -3,7 +3,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-@Disabled
 @TeleOp(name = "Concept: Scan Servo", group = "Concept")
 public class ServoTesting extends LinearOpMode {
 
@@ -23,7 +22,7 @@ public class ServoTesting extends LinearOpMode {
 
         // Connect to servo (Assume Robot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo = hardwareMap.get(Servo.class, "Gripper");
+        servo = hardwareMap.get(Servo.class, "Arm");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -51,11 +50,16 @@ public class ServoTesting extends LinearOpMode {
             //     }
             // }
 
-            if(gamepad1.y){
-                position++;
-            }else if(gamepad1.a){
-                position--;
+
+            if(!gamepad1.y&&!gamepad1.a){
+                position=0.5;
+            }else if(!gamepad1.y&&gamepad1.a){
+                position=0.3;
+            }else if(gamepad1.y&&!gamepad1.a){
+                position=0.8;
             }
+
+
 
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", position);
