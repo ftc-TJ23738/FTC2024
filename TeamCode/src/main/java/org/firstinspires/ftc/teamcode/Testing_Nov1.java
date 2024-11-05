@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 /*
 ______  ______  ______
@@ -45,6 +47,12 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
 
 @TeleOp(name="Testing 11/1/24", group="Linear OpMode")
 public class Testing_Nov1 extends LinearOpMode {
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    Servo   Arm;
+    Servo   Gripper;
+    double  ArmPos = (MAX_POS - MIN_POS) / 2;
+    double  GripPos = (MAX_POS - MIN_POS) / 2;
     DigitalChannel armLimit;
     // Declare OpMode members for each of the 6 motors (and sensor)
     private ElapsedTime runtime = new ElapsedTime();
@@ -61,6 +69,8 @@ public class Testing_Nov1 extends LinearOpMode {
     public void runOpMode() {
         //Initialize magnetic sensor
         armLimit = hardwareMap.get(DigitalChannel.class, "magnet");
+        Arm = hardwareMap.get(Servo.class, "Arm");
+        Gripper = hardwareMap.get(Servo.class, "Gripper");
         armLimit.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
@@ -202,7 +212,7 @@ public class Testing_Nov1 extends LinearOpMode {
             //Use Dpad to control the tower movement variables.
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
                 //Determine if motor GravityCounter is needed, based off magnetic sensor
-                if (armLimit.getState() == false) {
+                if (!armLimit.getState()) {
                     twr=0.0;  //No Buttons Pressed, Arm At Max
                 } else {
                     twr=-0.075;  //No Buttons Pressed, PWR to counter weight
@@ -212,6 +222,20 @@ public class Testing_Nov1 extends LinearOpMode {
             } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
                 twr=0.5;
             }
+            if(!gamepad1.y&&!gamepad1.a){
+                ArmPos=0.5;
+            }else if(!gamepad1.y&&gamepad1.a){
+                ArmPos=0.95;
+            }else if(gamepad1.y&&!gamepad1.a){
+                ArmPos=0.3;
+            }
+            if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
+                GripPos=0.5;
+            }else if(!gamepad1.dpad_left&&gamepad1.dpad_right){
+                GripPos=0.95;
+            }else if(gamepad1.dpad_left&&!gamepad1.dpad_right){
+                GripPos=0.3;
+            }
 
             //make the wheels deal with all the data
             leftFrontDrive.setPower(leftFrontPower);
@@ -220,6 +244,8 @@ public class Testing_Nov1 extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower*0.76);
             leftCH.setPower(twr);
             rightCH.setPower(twr);
+            Arm.setPosition(ArmPos);
+            Gripper.setPosition(GripPos);
 
             // print out data from drive motors and color sensor
             telemetry.addData("Status", "Run Time: " + runtime.toString());                                 //Runtime
@@ -243,7 +269,7 @@ public class Testing_Nov1 extends LinearOpMode {
             } else {
                 telemetry.addData("Gravity-Counter", "ENABLED");
             }
-
+            telemetry.addData("Arm Position", "%5.2f", ArmPos);
             telemetry.update();
             relativeLayout.post(new Runnable() {
                 public void run() {
