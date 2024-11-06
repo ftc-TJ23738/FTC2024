@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-
+//import all packages
 
 /*
 ______  ______  ______
@@ -29,47 +29,35 @@ ______  ______  ______
 
 
 https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
- * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
- *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
- *
- * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
- * Each motion axis is controlled by one Joystick axis.
- *
  * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
  * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
  * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
- *
- * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
- * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
- * the direction of all 4 motors (see code below).
  */
 
 @TeleOp(name="Testing 11/6/24", group="Linear OpMode")
 public class Testing_Nov6 extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
-    Servo   Arm;
-    Servo   Gripper;
-    double  ArmPos = (MAX_POS - MIN_POS) / 2;
+    double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
     double  GripPos = (MAX_POS - MIN_POS) / 2;
-    DigitalChannel armLimit;
-    // Declare OpMode members for each of the 6 motors (and sensor)
+    double  Speed = 0.6;
+    DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
+    private DcMotor leftFrontDrive = null;  //Drive Motors
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor leftCH = null;
+    private DcMotor leftCH = null;       //Tower Motors
     private DcMotor rightCH = null;
-    NormalizedColorSensor colorSensor;
+    Servo Arm;                //servos
+    Servo Gripper;
+    NormalizedColorSensor colorSensor;  //color sensors
     View relativeLayout;
 
     @Override
     public void runOpMode() {
-        //Initialize magnetic sensor
-        armLimit = hardwareMap.get(DigitalChannel.class, "magnet");
-        Arm = hardwareMap.get(Servo.class, "Arm");
+        armLimit = hardwareMap.get(DigitalChannel.class, "magnet");  //Init MagSensor
+        Arm = hardwareMap.get(Servo.class, "Arm");              //Init servos
         Gripper = hardwareMap.get(Servo.class, "Gripper");
         armLimit.setMode(DigitalChannel.Mode.INPUT);
 
@@ -91,7 +79,7 @@ public class Testing_Nov6 extends LinearOpMode {
             // Set the panel back to the default color
             relativeLayout.post(new Runnable() {
                 public void run() {
-                    relativeLayout.setBackgroundColor(Color.WHITE);
+                    relativeLayout.setBackgroundColor(Color.BLACK);
                 }
             });
         }
@@ -105,12 +93,8 @@ public class Testing_Nov6 extends LinearOpMode {
         // colors will report at or near 1, and you won't be able to determine what color you are
         // actually looking at. For this reason, it's better to err on the side of a lower gain
         // (but always greater than  or equal to 1).
-        float gain = 2;
+        float gain = 3;
 
-        // Once per loop, we will update this hsvValues array. The first element (0) will contain the
-        // hue, the second element (1) will contain the saturation, and the third element (2) will
-        // contain the value. See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html
-        // for an explanation of HSV color.
         final float[] hsvValues = new float[3];
 
         // xButtonPreviouslyPressed and xButtonCurrentlyPressed keep track of the previous and current
@@ -123,8 +107,6 @@ public class Testing_Nov6 extends LinearOpMode {
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "Color");
 
-        // If possible, turn the light on in the beginning (it might already be on anyway,
-        // we just make sure it is if we can).
         if (colorSensor instanceof SwitchableLight) {
             ((SwitchableLight) colorSensor).enableLight(true);
         }
@@ -166,13 +148,10 @@ public class Testing_Nov6 extends LinearOpMode {
             double max;
 
             // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y*0.6;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x*0.6;
-            double yaw     =  gamepad1.right_stick_x*0.6;
+            double axial   = -gamepad1.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x*Speed;
+            double yaw     =  gamepad1.right_stick_x*Speed;
             double twr = 0;
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -191,23 +170,6 @@ public class Testing_Nov6 extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-
-//            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-//            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-//            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-//            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B ga
-
-
 
             //Use Dpad to control the tower movement variables.
             if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
@@ -224,9 +186,9 @@ public class Testing_Nov6 extends LinearOpMode {
             }
             if(!gamepad1.y&&!gamepad1.a){
                 ArmPos=0.5;
-            }else if(!gamepad1.y&&gamepad1.a){
+            }else if(!gamepad1.y&&gamepad1.a){  //arm down
                 ArmPos=0.95;
-            }else if(gamepad1.y&&!gamepad1.a){
+            }else if(gamepad1.y&&!gamepad1.a){  //arm up
                 ArmPos=0.3;
             }
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
@@ -237,7 +199,7 @@ public class Testing_Nov6 extends LinearOpMode {
                 GripPos=0.3;
             }
 
-            //make the wheels deal with all the data
+            //Send Power To Motors
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
@@ -270,6 +232,7 @@ public class Testing_Nov6 extends LinearOpMode {
                 telemetry.addData("Gravity-Counter", "ENABLED");
             }
             telemetry.addData("Arm Position", "%5.2f", ArmPos);
+            telemetry.addData("Gripper Pos", "%5.2f", GripPos);
             telemetry.update();
             relativeLayout.post(new Runnable() {
                 public void run() {
