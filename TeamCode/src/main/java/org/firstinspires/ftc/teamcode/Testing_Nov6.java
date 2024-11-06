@@ -45,8 +45,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * the direction of all 4 motors (see code below).
  */
 
-@TeleOp(name="Testing 11/1/24", group="Linear OpMode")
-public class Testing_Nov1 extends LinearOpMode {
+@TeleOp(name="Testing 11/6/24", group="Linear OpMode")
+public class Testing_Nov6 extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     Servo   Arm;
