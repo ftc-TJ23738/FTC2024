@@ -151,14 +151,14 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             double axial   = -gamepad2.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad2.left_stick_x*Speed;
             double yaw     =  gamepad2.right_stick_x*Speed;
-            double twr = gamepad1.left_stick_y*0.75;
-            armPos = gamepad1.right_stick_y+0.5;
+            double twr = gamepad1.left_stick_y*0.58;
+            ArmPos = -gamepad1.right_stick_y+0.5;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
-            if(!armLimit.getState()){  //gravity counter for new Arm Ctrl
-                twr=twr+0.076;
+            if(armLimit.getState()){  //gravity counter for new Arm Ctrl
+                twr=twr-0.08;
             }
             //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
             //cannot be moved up farther than limit when moving joystick.
@@ -203,7 +203,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
 
 
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
-                GripPos=0.43;
+                GripPos=0.525;
             }else if(!gamepad1.dpad_left&&gamepad1.dpad_right){
                 GripPos=0.95;
             }else if(gamepad1.dpad_left&&!gamepad1.dpad_right){
