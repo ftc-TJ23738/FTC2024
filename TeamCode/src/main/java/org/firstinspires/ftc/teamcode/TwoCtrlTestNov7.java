@@ -34,8 +34,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
  */
 
-@TeleOp(name="2P Test 11/6", group="Linear OpMode")
-public class TwoCtrlTestNov6 extends LinearOpMode {
+@TeleOp(name="2P Test 11/7", group="Linear OpMode")
+public class TwoCtrlTestNov7 extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
@@ -152,10 +152,17 @@ public class TwoCtrlTestNov6 extends LinearOpMode {
             double lateral =  gamepad2.left_stick_x*Speed;
             double yaw     =  gamepad2.right_stick_x*Speed;
             double twr = gamepad1.left_stick_y*0.75;
+            armPos = gamepad1.right_stick_y+0.5;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
+            if(!armLimit.getState()){  //gravity counter for new Arm Ctrl
+                twr=twr+0.076;
+            }
+            //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
+            //cannot be moved up farther than limit when moving joystick.
+
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -184,15 +191,19 @@ public class TwoCtrlTestNov6 extends LinearOpMode {
             // } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
             //     twr=0.5;
             // }
-            if(!gamepad1.y&&!gamepad1.a){
-                ArmPos=0.5;
-            }else if(!gamepad1.y&&gamepad1.a){  //arm down
-                ArmPos=1.05;
-            }else if(gamepad1.y&&!gamepad1.a){  //arm up
-                ArmPos=0.3;
-            }
+
+
+            // if(!gamepad1.y&&!gamepad1.a){
+            //     ArmPos=0.5;
+            // }else if(!gamepad1.y&&gamepad1.a){  //arm down
+            //     ArmPos=1.05;
+            // }else if(gamepad1.y&&!gamepad1.a){  //arm up
+            //     ArmPos=0.3;
+            // }
+
+
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
-                GripPos=0.5;
+                GripPos=0.43;
             }else if(!gamepad1.dpad_left&&gamepad1.dpad_right){
                 GripPos=0.95;
             }else if(gamepad1.dpad_left&&!gamepad1.dpad_right){
