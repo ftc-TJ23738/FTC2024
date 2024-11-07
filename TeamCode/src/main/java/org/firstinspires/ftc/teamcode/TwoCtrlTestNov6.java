@@ -151,7 +151,7 @@ public class TwoCtrlTestNov6 extends LinearOpMode {
             double axial   = -gamepad2.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad2.left_stick_x*Speed;
             double yaw     =  gamepad2.right_stick_x*Speed;
-            double twr = 0;
+            double twr = gamepad1.left_stick_y*0.75;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
@@ -172,18 +172,18 @@ public class TwoCtrlTestNov6 extends LinearOpMode {
 
 
             //Use Dpad to control the tower movement variables.
-            if(!gamepad1.dpad_up&&!gamepad1.dpad_down){
-                //Determine if motor GravityCounter is needed, based off magnetic sensor
-                if (!armLimit.getState()) {
-                    twr=0.0;  //No Buttons Pressed, Arm At Max
-                } else {
-                    twr=-0.075;  //No Buttons Pressed, PWR to counter weight
-                }
-            } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
-                twr=-0.5;
-            } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
-                twr=0.5;
-            }
+            // if(!gamepad1.left_stick_y>0.5&&!gamepad1.left_stick_y<0.5){
+            //     //Determine if motor GravityCounter is needed, based off magnetic sensor
+            //     if (!armLimit.getState()) {
+            //         twr=0.0;  //No Buttons Pressed, Arm At Max
+            //     } else {
+            //         twr=-0.075;  //No Buttons Pressed, PWR to counter weight
+            //     }
+            // } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
+            //     twr=-0.5;
+            // } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
+            //     twr=0.5;
+            // }
             if(!gamepad1.y&&!gamepad1.a){
                 ArmPos=0.5;
             }else if(!gamepad1.y&&gamepad1.a){  //arm down
