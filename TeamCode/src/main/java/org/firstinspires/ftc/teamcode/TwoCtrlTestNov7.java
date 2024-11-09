@@ -151,13 +151,13 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             double axial   = -gamepad2.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad2.left_stick_x*Speed;
             double yaw     =  gamepad2.right_stick_x*Speed;
-            double twr = gamepad1.left_stick_y*0.75;
-            armPos = gamepad1.right_stick_y+0.5;
+            double twr = gamepad1.left_stick_y*0.5;
+            ArmPos = -gamepad1.right_stick_y+0.5;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
-            if(!armLimit.getState()){  //gravity counter for new Arm Ctrl
+            if(armLimit.getState()){  //gravity counter for new Arm Ctrl
                 twr=twr+0.076;
             }
             //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
@@ -237,7 +237,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             if (colorSensor instanceof DistanceSensor) {
                 telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
             }
-            if (armLimit.getState() == false) {                         //GravityCounterState
+            if (!armLimit.getState()) {                         //GravityCounterState
                 telemetry.addData("Gravity-Counter", "DISABLED");
             } else {
                 telemetry.addData("Gravity-Counter", "ENABLED");
