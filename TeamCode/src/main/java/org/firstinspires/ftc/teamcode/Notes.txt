@@ -1,0 +1,22 @@
+Scripts that are useful:
+
+ConceptVisionColorSensor:
+>Uses a webcam to identify colors
+>Can replace color sensor
+>Can capture all colors, or just in a range of interest
+
+ConceptSoundsASJava:
+>Playing sounds from DS or CH
+
+RobotAutoDriveToAprilTagOmni:
+>Uses webcam to see april tags
+>Still allows for manual ctrl (if it doesnt see tag)
+>if it sees a tag, it will tell you to hold left bumper
+>when holding left bumper, it will auto drive to tag
+
+Most IMU Programs:
+>IMU are able to determine Roll, Pitch, Yaw, etc.
+>There is a built in IMU inside CH
+
+ConceptVisionColorLocator:
+>Same principles as Sensor, but is able to locate colors on camera
