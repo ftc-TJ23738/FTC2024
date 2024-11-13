@@ -144,7 +144,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             xButtonPreviouslyPressed = xButtonCurrentlyPressed;
             NormalizedRGBA colors = colorSensor.getNormalizedColors();
             Color.colorToHSV(colors.toColor(), hsvValues);
-            Speed = gamepad2.a ? 0.8 : 0.6;
+            Speed = gamepad2.a ? 0.85 : 0.6;
             double max;
 
             // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
@@ -159,6 +159,9 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             double rightBackPower  = axial + lateral - yaw;
             if(armLimit.getState()){  //gravity counter for new Arm Ctrl
                 twr=twr-0.08;
+            }
+            if(!armLimit.getState()&&twr<0){
+                twr=0;
             }
             //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
             //cannot be moved up farther than limit when moving joystick.
