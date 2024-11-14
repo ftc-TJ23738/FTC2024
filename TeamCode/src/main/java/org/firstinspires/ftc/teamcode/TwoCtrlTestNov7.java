@@ -42,6 +42,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
     double  GripPos = (MAX_POS - MIN_POS) / 2;
     double  Speed = 0.6;
     DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
+    DigitalChannel TwrLimit;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;  //Drive Motors
     private DcMotor leftBackDrive = null;
@@ -60,6 +61,8 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
         Arm = hardwareMap.get(Servo.class, "Arm");              //Init servos
         Gripper = hardwareMap.get(Servo.class, "Gripper");
         armLimit.setMode(DigitalChannel.Mode.INPUT);
+        TwrLimit = hardwareMap.get(DigitalChannel.class, "TwrLimit");
+        TwrLimit.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -165,7 +168,14 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             }
             //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
             //cannot be moved up farther than limit when moving joystick.
-
+//            if(gamepad1.y){
+//                while(!TwrLimit.getState()) {
+//                    twr = 0.75;
+//                }
+//            }
+            if(TwrLimit.getState()&&gamepad1.y){
+                twr=0.75;
+            }
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -245,6 +255,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             } else {
                 telemetry.addData("Gravity-Counter", "ENABLED");
             }
+            telemetry.addData("TwrLimit", TwrLimit.getState());
             telemetry.addData("Arm Position", "%5.2f", ArmPos);
             telemetry.addData("Gripper Pos", "%5.2f", GripPos);
             telemetry.update();
