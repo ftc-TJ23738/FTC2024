@@ -43,6 +43,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
     double  Speed = 0.6;
     DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
     DigitalChannel TwrLimit;
+    DigitalChannel ArmMag;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;  //Drive Motors
     private DcMotor leftBackDrive = null;
@@ -63,6 +64,8 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
         armLimit.setMode(DigitalChannel.Mode.INPUT);
         TwrLimit = hardwareMap.get(DigitalChannel.class, "TwrLimit");
         TwrLimit.setMode(DigitalChannel.Mode.INPUT);
+        ArmMag = hardwareMap.get(DigitalChannel.class, "ArmMagnet");
+        ArmMag.setMode((DigitalChannel.Mode.INPUT));
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -176,6 +179,9 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             if(TwrLimit.getState()&&gamepad1.y){
                 twr=0.75;
             }
+            if(ArmMag.getState()&&gamepad1.y){
+                ArmPos=-0.75;
+            }
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -256,6 +262,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
                 telemetry.addData("Gravity-Counter", "ENABLED");
             }
             telemetry.addData("TwrLimit", TwrLimit.getState());
+            telemetry.addData("ArmMag", ArmMag.getState());
             telemetry.addData("Arm Position", "%5.2f", ArmPos);
             telemetry.addData("Gripper Pos", "%5.2f", GripPos);
             telemetry.update();
