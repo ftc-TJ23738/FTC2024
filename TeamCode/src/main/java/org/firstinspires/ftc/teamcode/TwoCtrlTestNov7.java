@@ -64,8 +64,8 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
         armLimit.setMode(DigitalChannel.Mode.INPUT);
         TwrLimit = hardwareMap.get(DigitalChannel.class, "TwrLimit");
         TwrLimit.setMode(DigitalChannel.Mode.INPUT);
-        ArmMag = hardwareMap.get(DigitalChannel.class, "ArmMagnet");
-        ArmMag.setMode((DigitalChannel.Mode.INPUT));
+        ArmMag = hardwareMap.get(DigitalChannel.class, "ArmMag");
+        ArmMag.setMode(DigitalChannel.Mode.INPUT);
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
@@ -180,7 +180,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
                 twr=0.75;
             }
             if(ArmMag.getState()&&gamepad1.y){
-                ArmPos=-0.75;
+                ArmPos=-0.85;
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -222,7 +222,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
 
 
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
-                GripPos=0.525;
+                GripPos=0.3;
             }else if(!gamepad1.dpad_left&&gamepad1.dpad_right){
                 GripPos=0.95;
             }else if(gamepad1.dpad_left&&!gamepad1.dpad_right){
