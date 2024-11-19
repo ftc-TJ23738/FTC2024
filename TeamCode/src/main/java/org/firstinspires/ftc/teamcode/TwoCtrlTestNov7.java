@@ -180,7 +180,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
                 twr=0.75;
             }
             if(ArmMag.getState()&&gamepad1.y){
-                ArmPos=-0.85;
+                ArmPos=-1;
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -222,7 +222,7 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
 
 
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
-                GripPos=0.3;
+                GripPos=0.555;
             }else if(!gamepad1.dpad_left&&gamepad1.dpad_right){
                 GripPos=0.95;
             }else if(gamepad1.dpad_left&&!gamepad1.dpad_right){
