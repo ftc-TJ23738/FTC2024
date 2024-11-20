@@ -151,11 +151,11 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
             NormalizedRGBA colors = colorSensor.getNormalizedColors();
             Color.colorToHSV(colors.toColor(), hsvValues);
             //Speed = gamepad2.a ? 0.85 : 0.6;
-            if(LeftTrigger<0.5&&RightTrigger<0.5){
+            if(gamepad2.left_trigger<0.5&&gamepad2.right_trigger<0.5){
                 Speed =0.6;  // Normal Speed
-            }else if(LeftTrigger>0.5&&RightTrigger<0.5){
+            }else if(gamepad2.left_trigger>0.5&&gamepad2.right_trigger<0.5){
                 Speed = 0.85;  //Fast Mode
-            }else if(LeftTrigger<0.5&&RightTrigger>0.5){
+            }else if(gamepad2.left_trigger<0.5&&gamepad2.right_trigger>0.5){
                 Speed=0.4;  //Slow Mode
             }
             double max;
