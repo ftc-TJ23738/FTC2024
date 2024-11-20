@@ -150,7 +150,14 @@ public class TwoCtrlTestNov7 extends LinearOpMode {
             xButtonPreviouslyPressed = xButtonCurrentlyPressed;
             NormalizedRGBA colors = colorSensor.getNormalizedColors();
             Color.colorToHSV(colors.toColor(), hsvValues);
-            Speed = gamepad2.a ? 0.85 : 0.6;
+            //Speed = gamepad2.a ? 0.85 : 0.6;
+            if(LeftTrigger<0.5&&RightTrigger<0.5){
+                Speed =0.6;  // Normal Speed
+            }else if(LeftTrigger>0.5&&RightTrigger<0.5){
+                Speed = 0.85;  //Fast Mode
+            }else if(LeftTrigger<0.5&&RightTrigger>0.5){
+                Speed=0.4;  //Slow Mode
+            }
             double max;
 
             // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
