@@ -34,8 +34,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
  */
 
-@TeleOp(name="2P Test 11/7", group="Linear OpMode")
-public class TwoCtrlTestNov7 extends LinearOpMode {
+@TeleOp(name="2P Test 11/20", group="Linear OpMode")
+public class TwoCtrlTestNov20 extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
