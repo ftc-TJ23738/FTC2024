@@ -41,9 +41,14 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
     double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
     double  GripPos = (MAX_POS - MIN_POS) / 2;
     double  Speed = 0.6;
+    double retainTime;
+    double twr;
+    double axial;
+    boolean doTele=true;
     DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
     DigitalChannel TwrLimit;
     DigitalChannel ArmMag;
+    double teleFill= 1;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;  //Drive Motors
     private DcMotor leftBackDrive = null;
@@ -161,10 +166,10 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
             double max;
 
             // POV Mode guses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad2.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
+            axial   = -gamepad2.left_stick_y*Speed;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad2.left_stick_x*Speed;
             double yaw     =  gamepad2.right_stick_x*Speed;
-            double twr = gamepad1.left_stick_y*0.58;
+            twr = gamepad1.left_stick_y*0.58;
             ArmPos = -gamepad1.right_stick_y+0.5;
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -188,6 +193,28 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
             }
             if(ArmMag.getState()&&gamepad1.y){
                 ArmPos=-1;
+            }
+            if(gamepad1.left_bumper&&gamepad1.right_bumper){
+                doTele=false;
+                telemetry.addData("NOW ASCENDING", teleFill);
+                telemetry.addData("OTHER TELEMETRY NOT VISIBLE", teleFill);
+                telemetry.addData("ONCE ASCENDED, PRESS RT TO DROP", teleFill);
+                telemetry.update();
+
+                retainTime = runtime.seconds();
+                while(!(retainTime>runtime.seconds()+5)){
+                    telemetry.addData("Preparing Ascent", teleFill);
+                    telemetry.update();
+                    twr = -0.5;
+                    axial = -0.25;
+                }
+                while(!(gamepad1.right_trigger >0.5)){
+                    telemetry.addData("ascending",teleFill);
+                    telemetry.update();
+                    twr = 0.85;
+                    leftCH.setPower(twr);
+                    rightCH.setPower(twr);
+                }
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -245,38 +272,50 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
             rightCH.setPower(twr);
             Arm.setPosition(ArmPos);
             Gripper.setPosition(GripPos);
-
-            // print out data from drive motors and color sensor
-            telemetry.addData("Status", "Run Time: " + runtime.toString());                                 //Runtime
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);         //FrontDrivePwr
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);           //BackDrivePwr
-            telemetry.addData("TowerPwr ", twr);                                                            //TowerPwr
-            telemetry.addLine()
-                    .addData("Red", "%.3f", colors.red)                                                     //ColorSensorStuff
-                    .addData("Green", "%.3f", colors.green)
-                    .addData("Blue", "%.3f", colors.blue);
-            telemetry.addLine()
-                    .addData("Hue", "%.3f", hsvValues[0])
-                    .addData("Saturation", "%.3f", hsvValues[1])
-                    .addData("Value", "%.3f", hsvValues[2]);
-            telemetry.addData("Alpha", "%.3f", colors.alpha);
-            if (colorSensor instanceof DistanceSensor) {
-                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+            if(doTele) {
+                // print out data from drive motors and color sensor
+                telemetry.addData("Status", "Run Time: " + runtime.toString());                                 //Runtime
+                telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);         //FrontDrivePwr
+                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);           //BackDrivePwr
+                telemetry.addData("TowerPwr ", twr);                                                            //TowerPwr
+                telemetry.addLine()
+                        .addData("Red", "%.3f", colors.red)                                                     //ColorSensorStuff
+                        .addData("Green", "%.3f", colors.green)
+                        .addData("Blue", "%.3f", colors.blue);
+                telemetry.addLine()
+                        .addData("Hue", "%.3f", hsvValues[0])
+                        .addData("Saturation", "%.3f", hsvValues[1])
+                        .addData("Value", "%.3f", hsvValues[2]);
+                telemetry.addData("Alpha", "%.3f", colors.alpha);
+                if (colorSensor instanceof DistanceSensor) {
+                    telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+                }
+                if (armLimit.getState() == false) {                         //GravityCounterState
+                    telemetry.addData("Gravity-Counter", "DISABLED");
+                } else {
+                    telemetry.addData("Gravity-Counter", "ENABLED");
+                }
+                telemetry.addData("TwrLimit", TwrLimit.getState());
+                telemetry.addData("ArmMag", ArmMag.getState());
+                telemetry.addData("Arm Position", "%5.2f", ArmPos);
+                telemetry.addData("Gripper Pos", "%5.2f", GripPos);
+                telemetry.update();
             }
-            if (armLimit.getState() == false) {                         //GravityCounterState
-                telemetry.addData("Gravity-Counter", "DISABLED");
-            } else {
-                telemetry.addData("Gravity-Counter", "ENABLED");
-            }
-            telemetry.addData("TwrLimit", TwrLimit.getState());
-            telemetry.addData("ArmMag", ArmMag.getState());
-            telemetry.addData("Arm Position", "%5.2f", ArmPos);
-            telemetry.addData("Gripper Pos", "%5.2f", GripPos);
-            telemetry.update();
             relativeLayout.post(new Runnable() {
                 public void run() {
                     relativeLayout.setBackgroundColor(Color.HSVToColor(hsvValues));
                 }
             });
         }
-    }}
+    }
+    public void ascend() {
+        retainTime = runtime.seconds();
+        if(!(retainTime >runtime.seconds()+5)){
+            twr = -0.5;
+            axial = -0.25;
+        }
+        while(!(gamepad1.right_trigger >0.5)){
+            twr = 0.85;
+        }
+    }
+}
