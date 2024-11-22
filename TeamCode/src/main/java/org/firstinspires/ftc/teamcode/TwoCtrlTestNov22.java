@@ -62,7 +62,7 @@ public class TwoCtrlTestNov22 extends LinearOpMode {
     View relativeLayout;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         armLimit = hardwareMap.get(DigitalChannel.class, "magnet");  //Init MagSensor
         Arm = hardwareMap.get(Servo.class, "Arm");              //Init servos
         Gripper = hardwareMap.get(Servo.class, "Gripper");
@@ -95,7 +95,7 @@ public class TwoCtrlTestNov22 extends LinearOpMode {
             });
         }
     }
-    protected void runSample() {
+    protected void runSample() throws InterruptedException {
         // You can give the sensor a gain value, will be multiplied by the sensor's raw value before the
         // normalized color values are calculated. Color sensors (especially the REV Color Sensor V3)
         // can give very low values (depending on the lighting conditions), which only use a small part
@@ -187,73 +187,81 @@ public class TwoCtrlTestNov22 extends LinearOpMode {
             if(ArmMag.getState()&&gamepad1.y){
                 ArmPos=-1;
             }
-            if(gamepad1.left_bumper&&gamepad1.right_bumper){
-                doTele=false;
-                telemetry.addData("NOW ASCENDING", teleFill);
-                telemetry.addData("OTHER TELEMETRY NOT VISIBLE", teleFill);
-                telemetry.addData("ONCE ASCENDED, PRESS RT TO DROP", teleFill);
-                telemetry.update();
-
-                retainTime = runtime.seconds();
-                while(!(retainTime>runtime.seconds()+3)){
-                    telemetry.addData("Preparing Ascent", teleFill);
-                    telemetry.update();
-                    twr = -0.5;
-                    axial = -0.25;
-                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-                    max = Math.max(max, Math.abs(leftBackPower));
-                    max = Math.max(max, Math.abs(rightBackPower));
-
-                    if (max > 1.0) {
-                        leftFrontPower  /= max;
-                        rightFrontPower /= max;
-                        leftBackPower   /= max;
-                        rightBackPower  /= max;
-                    }
-                    leftFrontPower  = axial + lateral + yaw;
-                    rightFrontPower = axial - lateral - yaw;
-                    leftBackPower   = axial - lateral + yaw;
-                    rightBackPower  = axial + lateral - yaw;
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower*0.76);
-                    rightBackDrive.setPower(rightBackPower*0.76);
-                    leftCH.setPower(twr);
-                    rightCH.setPower(twr);
-                    Arm.setPosition(ArmPos);
-                    Gripper.setPosition(GripPos);
-                }
-                while(!(gamepad1.right_trigger >0.5)){
-                    telemetry.addData("ascending",teleFill);
-                    telemetry.update();
-                    axial = 0;
-                    twr = 0.85;
-                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-                    max = Math.max(max, Math.abs(leftBackPower));
-                    max = Math.max(max, Math.abs(rightBackPower));
-
-                    if (max > 1.0) {
-                        leftFrontPower  /= max;
-                        rightFrontPower /= max;
-                        leftBackPower   /= max;
-                        rightBackPower  /= max;
-                    }
-                    leftFrontPower  = axial + lateral + yaw;
-                    rightFrontPower = axial - lateral - yaw;
-                    leftBackPower   = axial - lateral + yaw;
-                    rightBackPower  = axial + lateral - yaw;
-                    leftFrontDrive.setPower(leftFrontPower);
-                    rightFrontDrive.setPower(rightFrontPower);
-                    leftBackDrive.setPower(leftBackPower*0.76);
-                    rightBackDrive.setPower(rightBackPower*0.76);
-                    leftCH.setPower(twr);
-                    rightCH.setPower(twr);
-                    Arm.setPosition(ArmPos);
-                    Gripper.setPosition(GripPos);
-                }
-                twr=0;
-                doTele = true;
+            if(gamepad1.left_trigger>0.5){
+                twr=-0.3;
             }
+            if(gamepad1.right_trigger>0.5){
+                twr=0.8;
+            }
+//            if(gamepad1.left_bumper&&gamepad1.right_bumper){
+//                doTele=false;
+//                telemetry.addData("NOW ASCENDING", teleFill);
+//                telemetry.addData("OTHER TELEMETRY NOT VISIBLE", teleFill);
+//                telemetry.addData("ONCE ASCENDED, PRESS RT TO DROP", teleFill);
+//                telemetry.update();
+//
+//                retainTime = runtime.seconds();
+//                while(!gamepad1.b){
+//                    telemetry.addData("Preparing Ascent", teleFill);
+//                    telemetry.update();
+//                    twr = -0.5;
+//                    axial = -0.25;
+//
+//                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+//                    max = Math.max(max, Math.abs(leftBackPower));
+//                    max = Math.max(max, Math.abs(rightBackPower));
+//
+//                    if (max > 1.0) {
+//                        leftFrontPower  /= max;
+//                        rightFrontPower /= max;
+//                        leftBackPower   /= max;
+//                        rightBackPower  /= max;
+//                    }
+//                    leftFrontPower  = axial + lateral + yaw;
+//                    rightFrontPower = axial - lateral - yaw;
+//                    leftBackPower   = axial - lateral + yaw;
+//                    rightBackPower  = axial + lateral - yaw;
+//                    leftFrontDrive.setPower(leftFrontPower);
+//                    rightFrontDrive.setPower(rightFrontPower);
+//                    leftBackDrive.setPower(leftBackPower*0.76);
+//                    rightBackDrive.setPower(rightBackPower*0.76);
+//                    leftCH.setPower(twr);
+//                    rightCH.setPower(twr);
+//                    Arm.setPosition(ArmPos);
+//                    Gripper.setPosition(GripPos);
+//                    //wait(4,4);
+//                }
+//                while(!(gamepad1.right_trigger >0.5)){
+//                    telemetry.addData("ascending",teleFill);
+//                    telemetry.update();
+//                    axial = 0;
+//                    twr = 0.85;
+//                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+//                    max = Math.max(max, Math.abs(leftBackPower));
+//                    max = Math.max(max, Math.abs(rightBackPower));
+//
+//                    if (max > 1.0) {
+//                        leftFrontPower  /= max;
+//                        rightFrontPower /= max;
+//                        leftBackPower   /= max;
+//                        rightBackPower  /= max;
+//                    }
+//                    leftFrontPower  = axial + lateral + yaw;
+//                    rightFrontPower = axial - lateral - yaw;
+//                    leftBackPower   = axial - lateral + yaw;
+//                    rightBackPower  = axial + lateral - yaw;
+//                    leftFrontDrive.setPower(leftFrontPower);
+//                    rightFrontDrive.setPower(rightFrontPower);
+//                    leftBackDrive.setPower(leftBackPower*0.76);
+//                    rightBackDrive.setPower(rightBackPower*0.76);
+//                    leftCH.setPower(twr);
+//                    rightCH.setPower(twr);
+//                    Arm.setPosition(ArmPos);
+//                    Gripper.setPosition(GripPos);
+//                }
+//                twr=0;
+//                doTele = true;
+//            }
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
