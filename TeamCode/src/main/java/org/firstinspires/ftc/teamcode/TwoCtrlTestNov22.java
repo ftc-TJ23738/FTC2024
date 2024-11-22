@@ -195,7 +195,7 @@ public class TwoCtrlTestNov22 extends LinearOpMode {
                 telemetry.update();
 
                 retainTime = runtime.seconds();
-                while(!(retainTime>runtime.seconds()+5)){
+                while(!(retainTime>runtime.seconds()+3)){
                     telemetry.addData("Preparing Ascent", teleFill);
                     telemetry.update();
                     twr = -0.5;
@@ -251,6 +251,7 @@ public class TwoCtrlTestNov22 extends LinearOpMode {
                     Arm.setPosition(ArmPos);
                     Gripper.setPosition(GripPos);
                 }
+                twr=0;
                 doTele = true;
             }
 
