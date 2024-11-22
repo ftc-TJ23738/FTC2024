@@ -34,8 +34,8 @@ https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
  * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
  */
 
-@TeleOp(name="2P Test 11/20", group="Linear OpMode")
-public class TwoCtrlTestNov20 extends LinearOpMode {
+@TeleOp(name="2P Test 11/22", group="Linear OpMode")
+public class TwoCtrlTestNov22 extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
@@ -181,13 +181,6 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
             if(!armLimit.getState()&&twr<0){
                 twr=0;
             }
-            //maybe do if(!gamepad1.left_stick_y<0.1&&!armLimit.getState) to make it so arm
-            //cannot be moved up farther than limit when moving joystick.
-//            if(gamepad1.y){
-//                while(!TwrLimit.getState()) {
-//                    twr = 0.75;
-//                }
-//            }
             if(TwrLimit.getState()&&gamepad1.y){
                 twr=0.75;
             }
@@ -258,6 +251,7 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
                     Arm.setPosition(ArmPos);
                     Gripper.setPosition(GripPos);
                 }
+                doTele = true;
             }
 
             // Normalize the values so no wheel power exceeds 100%
@@ -273,29 +267,6 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
-
-            //Use Dpad to control the tower movement variables.
-            // if(!gamepad1.left_stick_y>0.5&&!gamepad1.left_stick_y<0.5){
-            //     //Determine if motor GravityCounter is needed, based off magnetic sensor
-            //     if (!armLimit.getState()) {
-            //         twr=0.0;  //No Buttons Pressed, Arm At Max
-            //     } else {
-            //         twr=-0.075;  //No Buttons Pressed, PWR to counter weight
-            //     }
-            // } else if (!gamepad1.dpad_down&&gamepad1.dpad_up) {
-            //     twr=-0.5;
-            // } else if (gamepad1.dpad_down&&!gamepad1.dpad_up) {
-            //     twr=0.5;
-            // }
-
-
-            // if(!gamepad1.y&&!gamepad1.a){
-            //     ArmPos=0.5;
-            // }else if(!gamepad1.y&&gamepad1.a){  //arm down
-            //     ArmPos=1.05;
-            // }else if(gamepad1.y&&!gamepad1.a){  //arm up
-            //     ArmPos=0.3;
-            // }
 
 
             if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
