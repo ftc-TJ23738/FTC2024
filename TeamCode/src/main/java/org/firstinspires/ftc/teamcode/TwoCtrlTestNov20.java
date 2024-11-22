@@ -207,13 +207,56 @@ public class TwoCtrlTestNov20 extends LinearOpMode {
                     telemetry.update();
                     twr = -0.5;
                     axial = -0.25;
+                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+                    max = Math.max(max, Math.abs(leftBackPower));
+                    max = Math.max(max, Math.abs(rightBackPower));
+
+                    if (max > 1.0) {
+                        leftFrontPower  /= max;
+                        rightFrontPower /= max;
+                        leftBackPower   /= max;
+                        rightBackPower  /= max;
+                    }
+                    leftFrontPower  = axial + lateral + yaw;
+                    rightFrontPower = axial - lateral - yaw;
+                    leftBackPower   = axial - lateral + yaw;
+                    rightBackPower  = axial + lateral - yaw;
+                    leftFrontDrive.setPower(leftFrontPower);
+                    rightFrontDrive.setPower(rightFrontPower);
+                    leftBackDrive.setPower(leftBackPower*0.76);
+                    rightBackDrive.setPower(rightBackPower*0.76);
+                    leftCH.setPower(twr);
+                    rightCH.setPower(twr);
+                    Arm.setPosition(ArmPos);
+                    Gripper.setPosition(GripPos);
                 }
                 while(!(gamepad1.right_trigger >0.5)){
                     telemetry.addData("ascending",teleFill);
                     telemetry.update();
+                    axial = 0;
                     twr = 0.85;
+                    max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+                    max = Math.max(max, Math.abs(leftBackPower));
+                    max = Math.max(max, Math.abs(rightBackPower));
+
+                    if (max > 1.0) {
+                        leftFrontPower  /= max;
+                        rightFrontPower /= max;
+                        leftBackPower   /= max;
+                        rightBackPower  /= max;
+                    }
+                    leftFrontPower  = axial + lateral + yaw;
+                    rightFrontPower = axial - lateral - yaw;
+                    leftBackPower   = axial - lateral + yaw;
+                    rightBackPower  = axial + lateral - yaw;
+                    leftFrontDrive.setPower(leftFrontPower);
+                    rightFrontDrive.setPower(rightFrontPower);
+                    leftBackDrive.setPower(leftBackPower*0.76);
+                    rightBackDrive.setPower(rightBackPower*0.76);
                     leftCH.setPower(twr);
                     rightCH.setPower(twr);
+                    Arm.setPosition(ArmPos);
+                    Gripper.setPosition(GripPos);
                 }
             }
 
