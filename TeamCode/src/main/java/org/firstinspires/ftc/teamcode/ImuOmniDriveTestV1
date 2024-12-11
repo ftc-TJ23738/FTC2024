@@ -1,0 +1,116 @@
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+/*
+ * This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
+ * Updated for a mecanum X drive configuration.
+ */
+@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
+@Disabled
+public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
+
+    /* Declare OpMode members. */
+    private DcMotor         frontLeft   = null;
+    private DcMotor         frontRight  = null;
+    private DcMotor         rearLeft    = null;
+    private DcMotor         rearRight   = null;
+    private IMU             imu         = null;      // Control/Expansion Hub IMU
+
+    private double          headingError  = 0;
+
+    // Define the desired driving/control characteristics
+    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
+    static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
+    static final double     P_TURN_GAIN            = 0.02;     // Proportional gain for turning.
+    static final double     P_DRIVE_GAIN           = 0.03;     // Proportional gain for driving straight.
+
+    @Override
+    public void runOpMode() {
+
+        // Initialize the drive system variables.
+        frontLeft  = hardwareMap.get(DcMotor.class, "front_left");
+        frontRight = hardwareMap.get(DcMotor.class, "front_right");
+        rearLeft   = hardwareMap.get(DcMotor.class, "rear_left");
+        rearRight  = hardwareMap.get(DcMotor.class, "rear_right");
+
+        // Set motor directions
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        rearLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        rearRight.setDirection(DcMotor.Direction.FORWARD);
+
+        // Initialize the IMU
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        // Reset encoders and set zero power behavior
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Wait for the game to start (Display Gyro value while waiting)
+        while (opModeInInit()) {
+            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            telemetry.update();
+        }
+
+        // Reset the heading
+        imu.resetYaw();
+
+        // Implement movement logic as needed for your autonomous sequence
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        turnToHeading( TURN_SPEED, -45.0);         // Turn CW to -45 Degrees
+        holdHeading( TURN_SPEED, -45.0, 0.5);      // Hold -45 Deg heading for 1/2 second
+        // Add more movement commands here as needed
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+        sleep(1000);  // Pause to display last telemetry message.
+    }
+
+    // Modify moveRobot function to handle mecanum wheel movement
+    public void moveRobot(double drive, double strafe, double turn) {
+        double frontLeftPower = drive + strafe + turn;
+        double frontRightPower = drive - strafe - turn;
+        double rearLeftPower = drive - strafe + turn;
+        double rearRightPower = drive + strafe - turn;
+
+        // Normalize powers to stay within the range of -1 to 1
+        double maxPower = Math.max(Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower)),
+                                   Math.max(Math.abs(rearLeftPower), Math.abs(rearRightPower)));
+        if (maxPower > 1.0) {
+            frontLeftPower /= maxPower;
+            frontRightPower /= maxPower;
+            rearLeftPower /= maxPower;
+            rearRightPower /= maxPower;
+        }
+
+        // Set motor powers
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        rearLeft.setPower(rearLeftPower);
+        rearRight.setPower(rearRightPower);
+    }
+
+    // Add other helper functions here as needed (e.g., getSteeringCorrection, driveStraight, turnToHeading)
+}
