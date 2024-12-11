@@ -20,3 +20,12 @@ Most IMU Programs:
 
 ConceptVisionColorLocator:
 >Same principles as Sensor, but is able to locate colors on camera
+
+movement
+fw 12
+right 90
+fw 22
+left 90
+fw 34
+
+each tile is 24" squared
