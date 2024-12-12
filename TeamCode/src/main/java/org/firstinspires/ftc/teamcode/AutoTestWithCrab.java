@@ -128,7 +128,7 @@ public class AutoTestWithCrab extends LinearOpMode {
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max turn speed to limit turn rate.
+    static final double     TURN_SPEED              = 0.4;     // Max turn speed to limit turn rate.
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -200,21 +200,14 @@ public class AutoTestWithCrab extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 12.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, 90);               // Turn  CW to -45 Degrees
-        driveStraight(DRIVE_SPEED*0.7,22,0.0);
-        turnToHeading(TURN_SPEED,0.0);
-        driveStraight(DRIVE_SPEED,34,0.0);
-        driveStraight(DRIVE_SPEED,-12,0.0);
-        turnToHeading(TURN_SPEED,90);
-        driveStraight(DRIVE_SPEED,36,0.0);
-        turnToHeading(TURN_SPEED,0.0);
-        driveStraight(DRIVE_SPEED,40,0.0);
-        turnToHeading( TURN_SPEED, 90); 
-        driveStraight(DRIVE_SPEED,12,0.0);
-        turnToHeading(TURN_SPEED,0.0);
-        driveStraight(DRIVE_SPEED,-40,0.0);
-        driveStraight(DRIVE_SPEED, 45,0.0);
+        driveStraight(DRIVE_SPEED, 12.0, 0.0, true);    // Drive Forward 12
+        driveStraight(DRIVE_SPEED, -24, 0.0, false);    //drive left 24
+        driveStraight(DRIVE_SPEED, 30, 0.0, true);
+        //hang specimin here
+        driveStraight(DRIVE_SPEED, -30, 0.0, true);
+
+        
+        
 
 //        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
 //        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
