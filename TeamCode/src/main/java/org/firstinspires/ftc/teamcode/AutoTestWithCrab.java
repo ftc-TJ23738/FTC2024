@@ -29,16 +29,23 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights r
 
 //package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import android.view.View;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -98,9 +105,14 @@ public class AutoTestWithCrab extends LinearOpMode {
     private DcMotor         leftBackDrive = null;
     private DcMotor         rightBackDrive = null;
     private IMU             imu         = null;      // Control/Expansion Hub IMU
-
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;
     private double          headingError  = 0;
-
+    double  ArmPos = (MAX_POS - MIN_POS) / 2;   //Servo Pos Vars
+    double  GripPos = (MAX_POS - MIN_POS) / 2;
+    double  Speed = 0.6;
+    double retainTime;
+    double twr;
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
     private double  targetHeading = 0;
@@ -112,6 +124,7 @@ public class AutoTestWithCrab extends LinearOpMode {
     private int     rightFrontTarget   = 0;
     private int     leftBackTarget     = 0;
     private int     rightBackTarget    = 0;
+    private ElapsedTime     runtime = new ElapsedTime();
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -137,16 +150,34 @@ public class AutoTestWithCrab extends LinearOpMode {
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable.
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable.
-
+    private DcMotor leftCH = null;       //Tower Motors
+    private DcMotor rightCH = null;
+    Servo Arm;                //servos
+    Servo Gripper;
+    NormalizedColorSensor colorSensor;  //color sensors
+    View relativeLayout;
+    DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
+    DigitalChannel TwrLimit;
+    DigitalChannel ArmMag;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         // Initialize the drive system variables.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        armLimit = hardwareMap.get(DigitalChannel.class, "magnet");  //Init MagSensor
+        Arm = hardwareMap.get(Servo.class, "Arm");              //Init servos
+        Gripper = hardwareMap.get(Servo.class, "Gripper");
+        armLimit.setMode(DigitalChannel.Mode.INPUT);
+        TwrLimit = hardwareMap.get(DigitalChannel.class, "TwrLimit");
+        TwrLimit.setMode(DigitalChannel.Mode.INPUT);
+        ArmMag = hardwareMap.get(DigitalChannel.class, "ArmMag");
+        ArmMag.setMode(DigitalChannel.Mode.INPUT);
+        leftCH = hardwareMap.get(DcMotor.class, "leftCH");
+        rightCH = hardwareMap.get(DcMotor.class, "rightCH");
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -156,6 +187,8 @@ public class AutoTestWithCrab extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftCH.setDirection(DcMotor.Direction.REVERSE);
+        rightCH.setDirection(DcMotor.Direction.FORWARD);
 
         /* The next two lines define Hub orientation.
          * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
@@ -200,11 +233,25 @@ public class AutoTestWithCrab extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 12.0, 0.0, true);    // Drive Forward 12
-        driveStraight(DRIVE_SPEED, -24, 0.0, false);    //drive left 24
-        driveStraight(DRIVE_SPEED, 30, 0.0, true);
+        driveStraight(DRIVE_SPEED, 12.0, 0.0, 1);    // Drive Forward 12
+        driveStraight(DRIVE_SPEED, -40, 0.0, 2);    //drive left 24
+        driveStraight(DRIVE_SPEED, 30, 0.0, 1);
         //hang specimin here
-        driveStraight(DRIVE_SPEED, -30, 0.0, true);
+        resetRuntime();
+//        while (runtime.seconds() < 3.0) {
+//            twr =-0.5;
+//            leftCH.setPower(twr);
+//            rightCH.setPower(twr);
+//        }
+        twr = -0.5;
+        leftCH.setPower(twr);
+        rightCH.setPower(twr);
+        Thread.sleep(3000);
+
+        twr = -0.05;
+        leftCH.setPower(twr);
+        rightCH.setPower(twr);
+        driveStraight(DRIVE_SPEED, -30, 0.0, 1);
 
         
         
@@ -242,13 +289,13 @@ public class AutoTestWithCrab extends LinearOpMode {
      * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
      * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
      * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     * @param fb                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from the current robotHeading.
      */
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading,
-                              boolean fb) {
+                              double fb) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
@@ -256,20 +303,32 @@ public class AutoTestWithCrab extends LinearOpMode {
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
 
-            if(fb=true){
+            if(fb==1){
                 //forward & backward
+                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
                 leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
                 rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
                 leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
                 rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
-            }else if(fb=false){
-                //side to side
+            }else if(fb==2){
+                //side to
+                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
                 leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
                 rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
-                rightFrontTarget = rightFrontTarget*-1;
                 leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
-                leftBackTarget = leftBackTarget*-1;
                 rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+//                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+//                rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+//                rightFrontTarget = rightFrontTarget*-1;
+//                leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+//                leftBackTarget = leftBackTarget*-1;
+//                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
             }
 
 
@@ -279,10 +338,10 @@ public class AutoTestWithCrab extends LinearOpMode {
             // rightTarget = rightBackDrive.getCurrentPosition() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            leftFrontDrive.setTargetPosition(leftTarget);
-            rightFrontDrive.setTargetPosition(rightTarget);
-            leftBackDrive.setTargetPosition(leftTarget);
-            rightBackDrive.setTargetPosition(rightTarget);
+            leftFrontDrive.setTargetPosition(leftFrontTarget);
+            rightFrontDrive.setTargetPosition(rightFrontTarget);
+            leftBackDrive.setTargetPosition(leftBackTarget);
+            rightBackDrive.setTargetPosition(rightBackTarget);
 
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -456,7 +515,7 @@ public class AutoTestWithCrab extends LinearOpMode {
 
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
-            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
+            //telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
             telemetry.addData("Actual Pos L:R",  "%7d:%7d",      leftFrontDrive.getCurrentPosition(),
                     rightFrontDrive.getCurrentPosition());
         } else {
