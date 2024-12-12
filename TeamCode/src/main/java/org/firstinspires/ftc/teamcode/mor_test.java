@@ -200,10 +200,20 @@ public class mor_test extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 12.0, 0.0);    // Drive Forward 24"
         turnToHeading( TURN_SPEED, 90);               // Turn  CW to -45 Degrees
-        //holdHeading( TURN_SPEED, 90, 100.5);   // Hold -45 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED*0.7,22,0.0);
         turnToHeading(TURN_SPEED,0.0);
         driveStraight(DRIVE_SPEED,34,0.0);
+        driveStraight(DRIVE_SPEED,-12,0.0);
+        turnToHeading(TURN_SPEED,90);
+        driveStraight(DRIVE_SPEED,36,0.0);
+        turnToHeading(TURN_SPEED,0.0);
+        driveStraight(DRIVE_SPEED,40,0.0);
+        turnToHeading( TURN_SPEED, 90); 
+        driveStraight(DRIVE_SPEED,12,0.0);
+        turnToHeading(TURN_SPEED,0.0);
+        driveStraight(DRIVE_SPEED,-40,0.0);
+        driveStraight(DRIVE_SPEED, 45,0.0);
+
 //        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
 //        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
 //        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
