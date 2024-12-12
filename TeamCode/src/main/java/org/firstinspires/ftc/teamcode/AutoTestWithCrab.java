@@ -246,7 +246,7 @@ public class AutoTestWithCrab extends LinearOpMode {
         twr = -0.5;
         leftCH.setPower(twr);
         rightCH.setPower(twr);
-        Thread.sleep(3000);
+        Thread.sleep(1000);
 
         twr = -0.05;
         leftCH.setPower(twr);
