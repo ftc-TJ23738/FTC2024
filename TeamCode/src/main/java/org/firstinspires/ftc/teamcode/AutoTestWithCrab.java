@@ -391,7 +391,10 @@ public class AutoTestWithCrab extends LinearOpMode {
 
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-
+            leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
@@ -426,7 +429,10 @@ public class AutoTestWithCrab extends LinearOpMode {
 
         ElapsedTime holdTimer = new ElapsedTime();
         holdTimer.reset();
-
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
         // keep looping while we have time remaining.
         while (opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Determine required steering to keep on heading
