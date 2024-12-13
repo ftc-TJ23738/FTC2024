@@ -178,6 +178,7 @@ public class AutoTestWithCrab extends LinearOpMode {
         ArmMag.setMode(DigitalChannel.Mode.INPUT);
         leftCH = hardwareMap.get(DcMotor.class, "leftCH");
         rightCH = hardwareMap.get(DcMotor.class, "rightCH");
+        ArmPos = 0.5;
 
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -233,9 +234,9 @@ public class AutoTestWithCrab extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 12.0, 0.0, 1);    // Drive Forward 12
-        driveStraight(DRIVE_SPEED, -40, 0.0, 2);    //drive left 24
-        driveStraight(DRIVE_SPEED, 30, 0.0, 1);
+        driveStraight(DRIVE_SPEED, 12.0, 0.0);    // Drive Forward 12
+        crabWalk(DRIVE_SPEED, -40, 0.0);    //drive left 24
+        driveStraight(DRIVE_SPEED, 30, 0.0);
         //hang specimin here
         resetRuntime();
 //        while (runtime.seconds() < 3.0) {
@@ -244,13 +245,18 @@ public class AutoTestWithCrab extends LinearOpMode {
 //            rightCH.setPower(twr);
 //        }
         twr = -0.5;
+        ArmPos=1.5;
+        Arm.setPosition(ArmPos);
         leftCH.setPower(twr);
         rightCH.setPower(twr);
-        Thread.sleep(1000);
 
+        Thread.sleep(9000);
         twr = -0.05;
+        ArmPos=0.5;
+        Arm.setPosition(ArmPos);
         leftCH.setPower(twr);
         rightCH.setPower(twr);
+
         driveStraight(DRIVE_SPEED, -30, 0.0, 1);
 
         
@@ -289,22 +295,18 @@ public class AutoTestWithCrab extends LinearOpMode {
      * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
      * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
      * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     * @param fb                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from the current robotHeading.
      */
     public void driveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading,
-                              double fb) {
+                              double heading) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-
-            if(fb==1){
-                //forward & backward
                 leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
                 leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
                 rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -313,23 +315,7 @@ public class AutoTestWithCrab extends LinearOpMode {
                 rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
                 leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
                 rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
-            }else if(fb==2){
-                //side to
-                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
-                rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
-                leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
-                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
-//                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
-//                rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
-//                rightFrontTarget = rightFrontTarget*-1;
-//                leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
-//                leftBackTarget = leftBackTarget*-1;
-//                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
-            }
+            
 
 
             // leftTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
@@ -534,5 +520,75 @@ public class AutoTestWithCrab extends LinearOpMode {
     public double getHeading() {
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         return orientation.getYaw(AngleUnit.DEGREES);
+    }
+
+        public void crabWalk(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+
+           
+                leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+                rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+                rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+                leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+
+
+
+            // leftTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+            // rightTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+            // leftTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+            // rightTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+
+            // Set Target FIRST, then turn on RUN_TO_POSITION
+            leftFrontDrive.setTargetPosition(leftFrontTarget);
+            rightFrontDrive.setTargetPosition(rightFrontTarget);
+            leftBackDrive.setTargetPosition(leftBackTarget);
+            rightBackDrive.setTargetPosition(rightBackTarget);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(driveSpeed, turnSpeed);
+
+                // Display drive status for the driver.
+                sendTelemetry(true);
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 }
