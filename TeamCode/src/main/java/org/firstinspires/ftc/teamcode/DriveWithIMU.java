@@ -249,7 +249,13 @@ public class DriveWithIMU extends LinearOpMode {
                     //either increase left or rights
                 }else if(turnSpeed<0){
                     //whichever other ones
-                }else if()
+                }else if(turnSpeed==0){
+                    //nothing
+                    // leftFrontPower=leftFrontPower;
+                    // leftBackPower=leftBackPower;
+                    // rightFrontPower=rightFrontPower;
+                    // rightBackPower=rightBackPower;
+                }
             }
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
