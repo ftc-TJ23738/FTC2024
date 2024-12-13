@@ -257,7 +257,11 @@ public class AutoTestWithCrab extends LinearOpMode {
         leftCH.setPower(twr);
         rightCH.setPower(twr);
 
-        driveStraight(DRIVE_SPEED, -30, 0.0, 1);
+        driveStraight(DRIVE_SPEED, -12, 0.0);
+        crabWalk(DRIVE_SPEED,-55,0.0);
+        driveStraight(DRIVE_SPEED,40,0.0);
+        crabWalk(DRIVE_SPEED,-24,0.0);
+        driveStraight(DRIVE_SPEED,-50,0.0);
 
         
         
