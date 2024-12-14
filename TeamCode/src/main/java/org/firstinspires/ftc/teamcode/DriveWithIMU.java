@@ -51,6 +51,7 @@ public class DriveWithIMU extends LinearOpMode {
     double retainTime;
     double twr;
     double axial;
+    double turnSpeed;
     boolean doTele=true;
     DigitalChannel armLimit;  //Magnetic Limit Switch For Gravity Counter
     DigitalChannel TwrLimit;
@@ -244,11 +245,16 @@ public class DriveWithIMU extends LinearOpMode {
             if(gamepad2.a){
                 desiredYaw=getHeading();
                 //lateral=0;
-                turnSpeed = getSteeringCorrection(heading, 0.2);
+                turnSpeed = getSteeringCorrection(0, 0.2);
                 if(turnSpeed>0){
                     //either increase left or rights
+                     leftFrontPower=leftFrontPower*1.2;
+                     leftBackPower=leftBackPower*1.2;
+
                 }else if(turnSpeed<0){
                     //whichever other ones
+                     rightFrontPower=rightFrontPower*1.2;
+                     rightBackPower=rightBackPower*1.2;
                 }else if(turnSpeed==0){
                     //nothing
                     // leftFrontPower=leftFrontPower;
