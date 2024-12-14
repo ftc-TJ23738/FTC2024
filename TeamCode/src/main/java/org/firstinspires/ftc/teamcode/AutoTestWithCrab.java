@@ -1,4 +1,4 @@
-#package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
+package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -95,7 +95,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Mr Krabs V3.12", group="Robot")
+@Autonomous(name="Mr Krabs V3.14", group="Robot")
 //@Disabled
 public class AutoTestWithCrab extends LinearOpMode {
 
@@ -239,6 +239,14 @@ public class AutoTestWithCrab extends LinearOpMode {
         driveStraight(DRIVE_SPEED, 55, 0.0);
         crabWalk(DRIVE_SPEED,12,0.0);
         driveStraight(DRIVE_SPEED,-50,0.0);
+        driveStraight(DRIVE_SPEED,50,0.0);
+        crabWalk(DRIVE_SPEED,18,0.0);
+        driveStraight(DRIVE_SPEED,-50.0,0.0);
+        driveStraight(DRIVE_SPEED,50,0.0);
+        crabWalk(DRIVE_SPEED,18,0.0);
+        driveStraight(DRIVE_SPEED,-56.0,0.0);
+        driveStraight(DRIVE_SPEED,18,0.0);
+        //turnToHeading(TURN_SPEED,180.0);
         //hang specimin here
         //resetRuntime();
 //        while (runtime.seconds() < 3.0) {
