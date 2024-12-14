@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
+#package org.firstinspires.ftc.teamcode;/* Copyright (c) 2022 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -236,34 +236,34 @@ public class AutoTestWithCrab extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 6.0, 0.0);    // Drive Forward 12
         crabWalk(DRIVE_SPEED, 24, 0.0);    //drive left 24
-        driveStraight(DRIVE_SPEED, 48, 0.0);
+        driveStraight(DRIVE_SPEED, 55, 0.0);
         crabWalk(DRIVE_SPEED,12,0.0);
         driveStraight(DRIVE_SPEED,-50,0.0);
         //hang specimin here
-        resetRuntime();
+        //resetRuntime();
 //        while (runtime.seconds() < 3.0) {
 //            twr =-0.5;
 //            leftCH.setPower(twr);
 //            rightCH.setPower(twr);
 //        }
-        twr = -0.5;
-        ArmPos=1.5;
-        Arm.setPosition(ArmPos);
-        leftCH.setPower(twr);
-        rightCH.setPower(twr);
+        //twr = -0.5;
+        //ArmPos=1.5;
+        //Arm.setPosition(ArmPos);
+        //leftCH.setPower(twr);
+        //rightCH.setPower(twr);
 
-        Thread.sleep(9000);
-        twr = -0.05;
-        ArmPos=0.5;
-        Arm.setPosition(ArmPos);
-        leftCH.setPower(twr);
-        rightCH.setPower(twr);
+        //Thread.sleep(9000);
+        //twr = -0.05;
+        //ArmPos=0.5;
+        //Arm.setPosition(ArmPos);
+        //leftCH.setPower(twr);
+        //rightCH.setPower(twr);
 
-        driveStraight(DRIVE_SPEED, -12, 0.0);
-        crabWalk(DRIVE_SPEED,-55,0.0);
-        driveStraight(DRIVE_SPEED,40,0.0);
-        crabWalk(DRIVE_SPEED,-24,0.0);
-        driveStraight(DRIVE_SPEED,-50,0.0);
+        //driveStraight(DRIVE_SPEED, -12, 0.0);
+        //crabWalk(DRIVE_SPEED,-55,0.0);
+        //driveStraight(DRIVE_SPEED,40,0.0);
+        //crabWalk(DRIVE_SPEED,-24,0.0);
+        //driveStraight(DRIVE_SPEED,-50,0.0);
 
         
         
