@@ -263,6 +263,15 @@ public class DriveWithIMU extends LinearOpMode {
                     // rightBackPower=rightBackPower;
                 }
             }
+            if(gamepad1.a){
+                twr=0.8;
+                leftCH.setPower(twr);
+                rightCH.setPower(twr);
+                Thread.sleep(5000);
+                twr=0.0;
+                leftCH.setPower(twr);
+                rightCH.setPower(twr);
+            }
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower*0.76);
